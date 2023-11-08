@@ -14,8 +14,16 @@ const Dir = ({ name, item }: { name: string; item: unknown }) => {
             editor.setFileName(item.name);
             editor.setFileType(item.type);
             editor.setFileSize(item.size);
-            const content = await item.text();
-            editor.setContent(content.split("\n"));
+            if (editor.fileType.split("/")[0] === "image") {
+              const arraybuffer = await item.arrayBuffer();
+              const blob = new Blob([arraybuffer], { type: editor.fileType });
+              const url = window.URL.createObjectURL(blob);
+              console.log(url);
+              editor.setContent([url]);
+            } else {
+              const content = await item.text();
+              editor.setContent(content.split("\n"));
+            }
           }}
           className="pl-4 hover:underline"
         >
